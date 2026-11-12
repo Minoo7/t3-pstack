@@ -16,7 +16,9 @@
       "cursor-team-kit/skills/control-ui": "skills/control-ui",
       "cursor-team-kit/LICENSE": "LICENSE-cursor-team-kit"
     },
-    "exclude": [],
+    "exclude": [
+      "pstack/skills/statechart/scripts/test"
+    ],
     "meta": [
       "pstack/.cursor-plugin/plugin.json"
     ]
