@@ -128,7 +128,7 @@ export function t3ToolNames(contract: Tree): Set<string> {
   const names = new Set<string>();
   for (const [path, content] of contract) {
     if (!/\/toolkits\/[^/]+\/tools\.ts$/.test(path)) continue;
-    for (const m of content.toString("utf8").matchAll(/Tool\.make\(\s*(?:"([a-z0-9_]+)"|([A-Z0-9_]+))/g)) {
+    for (const m of content.toString("utf8").matchAll(/Tool\.make\(\s*(?:"([a-z0-9_]+)"|(?:\w+\.)?([A-Z0-9_]+)\b)/g)) {
       const name = m[1] ?? constants.get(m[2]!);
       if (!name) throw new Error(`${path}: cannot resolve tool name constant ${m[2]}`);
       names.add(name);

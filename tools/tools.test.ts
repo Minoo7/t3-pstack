@@ -390,8 +390,10 @@ test("t3ToolNames resolves tool names held in constants", () => {
   const contract: Tree = new Map([
     ["apps/server/src/mcp/toolkits/html/tools.ts", b('Tool.make(HTML_RENDER_TOOL_NAME, {\nbrowserTool(\n  Tool.make("preview_open", {')],
     ["packages/shared/src/htmlRender.ts", b('export const HTML_RENDER_TOOL_NAME = "html_render";')],
+    ["apps/server/src/mcp/toolkits/toolSearch/tools.ts", b("Tool.make(McpToolExposure.TOOL_SEARCH, {")],
+    ["apps/server/src/mcp/McpToolExposure.ts", b('export const TOOL_SEARCH = "tool_search";')],
   ]);
-  expect([...t3ToolNames(contract)].sort()).toEqual(["html_render", "preview_open"]);
+  expect([...t3ToolNames(contract)].sort()).toEqual(["html_render", "preview_open", "tool_search"]);
 });
 
 describe("session-start hook", () => {
