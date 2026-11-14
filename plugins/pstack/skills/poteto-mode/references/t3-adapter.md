@@ -49,7 +49,7 @@ A task in a linked environment (Worktrees section) returns `childThreadId: null`
 
 Upstream reads per-role models from "the `/setup-pstack` rule" (`~/.cursor/rules/pstack-models.mdc`) and falls back to slugs written in the skills. Under T3:
 
-1. Read the role's line in `~/.agents/pstack-models.md` (written by `/setup-pstack`). The line format is `<role>: <descriptor>[, <descriptor>]`, and a descriptor is `<provider>:<model>@<effort>`. Comment Sicko, which `no-comments` spawns, is a judgment lane, so it reads the `judgment and prose` line.
+1. Read the model sheet from Executor, where `/setup-pstack` saves it. Call `models.get` in the Executor app that serves these skills (Executor's `search` for "pstack models" returns its path). It returns `{ sheet }`, the sheet's text, or `{ sheet: null }` before the first `/setup-pstack`. Read the role's line in it. The line format is `<role>: <descriptor>[, <descriptor>]`, and a descriptor is `<provider>:<model>@<effort>`. Comment Sicko, which `no-comments` spawns, is a judgment lane, so it reads the `judgment and prose` line.
 2. Resolve each descriptor against `orchestrator_capabilities` into `target: {providerInstanceId, model, options}`. Call it once, before your first `delegate_task`, and again only after `delegate_task` rejects a target.
    - Provider is a `providerInstanceId` such as `claudeAgent` or `codex`. The short form `claude` means the instance whose `driverKind` is `claudeAgent`. Use an instance with `canRunChildTask: true`.
    - Model is a catalog model id. A short form such as `opus` means the newest catalog id that contains it.

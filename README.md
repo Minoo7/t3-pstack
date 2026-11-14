@@ -28,7 +28,7 @@ Then install the plugin for each provider you use in T3 Code.
 
 2. On Codex, run `codex` once in a terminal and trust the pstack hook at the startup prompt, or later with `/hooks`. Codex runs the hook only after you trust it. Until then, the line that step 4 adds to your Codex `AGENTS.md` still points the agent at the T3 adapter.
 3. Start a new thread in T3 Code.
-4. Pick your models. Type `/pstack:setup-pstack` (Claude) or `$pstack:setup-pstack` (Codex). It reads the models T3 offers, asks for a reasoning budget, and writes `~/.agents/pstack-models.md` with one model per role. Both providers read that file. Run it again to change your models.
+4. Pick your models. Type `/pstack:setup-pstack` (Claude) or `$pstack:setup-pstack` (Codex). It reads the models T3 offers, asks for a reasoning budget, and saves a sheet with one model per role in Executor, through the `models` tools of the Executor app that serves these skills. Every machine and both providers read that sheet. Run it again to change your models.
 
 ## Start a task
 
