@@ -5,7 +5,7 @@ description: Configure which models pstack uses per role and at what reasoning b
 
 # Setup pstack
 
-Write `~/.agents/pstack-models.md`, the sheet that sets pstack's model per role. Agents read it each time a pstack skill starts a subagent, per the [T3 adapter](../poteto-mode/references/t3-adapter.md). Both Claude and Codex read the same file.
+Save the sheet that sets pstack's model per role in Executor, so every machine and agent reads the same one. The Executor app that serves these skills has two tools for it: `models.get` returns `{ sheet }`, and `models.set` takes `{ sheet }` and replaces the whole sheet. Executor's `search` for "pstack models" returns their paths. Agents read the sheet each time a pstack skill starts a subagent, per the [T3 adapter](../poteto-mode/references/t3-adapter.md).
 
 ## Steps
 
@@ -15,7 +15,7 @@ Call `orchestrator_capabilities`. Its providers with `canRunChildTask: true` and
 
 ### 2. Load current state
 
-The default role-to-model mapping is the sheet shape shown in step 5 below. It is upstream's default mapping translated per the adapter's Model per role section for a catalog without Grok. When the catalog has a `grok` instance that can run child tasks, use it wherever step 5 shows `codex:gpt-6.1-sol`. If `~/.agents/pstack-models.md` already exists, read it and treat its `# budget` line and its role values as the current choices. If only `~/.claude/pstack-models.md` exists, from an earlier pstack port, read that one and resolve its short forms (`claude:opus@high`) to exact descriptors. Otherwise start from those defaults. A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
+The default role-to-model mapping is the sheet shape shown in step 5 below. It is upstream's default mapping translated per the adapter's Model per role section for a catalog without Grok. When the catalog has a `grok` instance that can run child tasks, use it wherever step 5 shows `codex:gpt-6.1-sol`. Call `models.get`. When `sheet` is not null, treat its `# budget` line and its role values as the current choices. When it is null and `~/.agents/pstack-models.md` exists from before the sheet moved to Executor, read that file instead, and resolve any short forms (`claude:opus@high`) to exact descriptors. Otherwise start from those defaults. A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
 
 ### 3. Budget, map, and confirm
 
@@ -34,9 +34,9 @@ The default role-to-model mapping is the sheet shape shown in step 5 below. It i
 
 Every real descriptor written must be in the detected set: its provider can run child tasks, its model is listed under that provider or found with `search`, and its effort is one of the `values` of that model's effort option, or absent when the model has no effort option. `inherit-parent` and `auto` always pass. If a chosen descriptor is not available, stop and ask again.
 
-### 5. Write the sheet
+### 5. Save the sheet
 
-Write `~/.agents/pstack-models.md` with a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. Shape, with the upstream defaults translated for a catalog without Grok:
+Call `models.set` with the whole sheet as `sheet`: a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels poteto-mode uses. It replaces the stored sheet, so re-runs stay idempotent. Executor asks the user to approve the save. Show them the sheet with the approval. Shape, with the upstream defaults translated for a catalog without Grok:
 
 ```
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
@@ -66,7 +66,7 @@ Codex runs the plugin's session-start hook only after the user trusts it, so poi
 
 ### 6. Confirm
 
-Tell the user the sheet was written and that the next subagent a pstack skill starts reads it. Re-running this skill updates it.
+Tell the user the sheet was saved in Executor and that the next subagent a pstack skill starts, on any machine, reads it. Re-running this skill updates it.
 
 ### 7. Offer a verification skill (optional)
 

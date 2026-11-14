@@ -24,7 +24,7 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- No `~/.agents/pstack-models.md` means `/setup-pstack` hasn't run for this user, so every role uses its default model.
+- `models.get` in the pstack Executor app returning `{ sheet: null }` means `/setup-pstack` hasn't run yet, so every role uses its default model.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention `/create-verification-skill` when the question is about proving a change works.
 - No formal verification skill in the project means no property is checked past what tests reach. Mention `/create-formal-verification-skill` when the question is about a race, an invariant, or another case tests rarely hit. When one exists and the code it covers changed after the commit it records as last in sync, mention `/maintain-formal-verification-skill` if the question touches that code.
 
@@ -36,7 +36,7 @@ When the model rule is missing and it matters, ask whether the user wants to pic
 ## Get set up
 
 1. Install for each provider used in T3 Code. Claude: `claude plugin marketplace add pmwoz/t3-pstack`, then `claude plugin install pstack@t3-pstack`. Codex: `codex plugin marketplace add pmwoz/t3-pstack`, then `codex plugin add pstack@t3-pstack`. Start a new thread afterwards.
-2. Run [`/setup-pstack`](../setup-pstack/SKILL.md). It reads the models T3 offers, asks for a reasoning budget, maps a model to each role, and writes `~/.agents/pstack-models.md`. Agents read it each time they start a subagent. Then it offers once each to generate a verification skill and a formal verification skill for the project, unless the project already has one.
+2. Run [`/setup-pstack`](../setup-pstack/SKILL.md). It reads the models T3 offers, asks for a reasoning budget, maps a model to each role, and saves the sheet in Executor. Agents read it each time they start a subagent. Then it offers once each to generate a verification skill and a formal verification skill for the project, unless the project already has one.
 3. Start a real task with `/pstack:poteto-mode` (Claude) or `$pstack:poteto-mode` (Codex), a goal, and a check that can pass or fail.
 
 Installing changes nothing until the user invokes a skill. Only `/setup-pstack` loads from the user's words. The [README](../../README.md) and [guide page 1](../../docs/guide/01-setup.md) have the details. Offer to word their first prompt with them, per [`references/prompting.md`](references/prompting.md).
@@ -135,7 +135,7 @@ Principles are one-rule skills that `/poteto-mode` reads and cites in its replie
 |---|---|
 | The mode stopped applying after a few turns | It attaches to one message. Start each task with `/poteto-mode`. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. |
-| A new model choice had no effect | Check that `~/.agents/pstack-models.md` has the role's line with a model T3 lists. Rerun `/setup-pstack` if not. |
+| A new model choice had no effect | Check that the sheet `models.get` returns has the role's line with a model T3 lists. Rerun `/setup-pstack` if not. |
 | Runs cost more than expected | See the cost paragraph under Get set up. |
 | A skill didn't load on its own | Only `/setup-pstack` loads from the user's words. The others load when the user types them or when `/poteto-mode` runs them, and it doesn't run every skill. |
 | Parallel agents overwrote each other | Give each writing agent its own worktree, as the T3 adapter's worktree rule says. |
